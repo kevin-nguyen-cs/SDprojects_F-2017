@@ -1,0 +1,4 @@
+vAssociation(A0...) has inheritance paired with non-null arrow
+vAssociation(A0...) has inheritance with roles
+vAssociation(A0...) has class-class relationships that are dotted
+

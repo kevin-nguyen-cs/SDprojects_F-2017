@@ -1,0 +1,7 @@
+vAssociation(A4...) has middle label should be empty
+vAssociation(A5...) has middle label should be empty
+vAssociation(A7...) has middle label should be empty
+vAssociation(A8...) has middle label should be empty
+vAssociation(A9...) has middle label should be empty
+vAssociation(A10...) has middle label should be empty
+

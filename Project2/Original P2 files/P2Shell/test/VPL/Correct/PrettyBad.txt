@@ -1,0 +1,6 @@
+vBox(ClassNode3...) and vBox(ClassNode2...) both have name = C
+vBox(Void0...) has null name
+vAssociation(A1...) has inheritance with roles
+vAssociation(A1...) has class-class relationships that are dotted
+vAssociation(A2...) has class-class relationships that are dotted
+

@@ -1,0 +1,5 @@
+rm -f *.vpl.pl
+for i in *.class.violet ; do
+   echo parsing $i
+   java Violett.ClassParser $i
+done

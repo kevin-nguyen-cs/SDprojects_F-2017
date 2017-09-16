@@ -1,0 +1,2 @@
+vAssociation(A5...) has class-class relationships that are dotted
+
