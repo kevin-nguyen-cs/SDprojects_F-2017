@@ -65,8 +65,17 @@ public class Conform {
                 .filter(c-> (c.is("name", ""))) //Null names are represented by empty strings in the name column.
                 .forEach(c->er.add("vBox(" + c.get("id")+ "...) has null name"));
 
-        // Triangle Constraint -- inheritance is a line with one arrow ending in a TRIANGLE. Its other arrow must be NONE.
-        //these constraints can be checked using constraints.java implies method - if (predicate1), then (predicate2) must be true, else error.
+        // Triangle Constraint -- inheritance is a line with one arrow ending in a TRIANGLE. Its other arrow must be NONE.       
+        //in a vAssociation, if arrow1 = TRIANGLE, arrow2 = "", and vice versa.
+        Constraints.implies(vAssociation,
+                (c-> c.is("arrow1","TRIANGLE")),                //"if" predicate
+                (c-> c.is("arrow2","")),                        //then this must be true.
+                "inheritance paired with non-null arrow", er);  //else report an error.
+        
+        Constraints.implies(vAssociation,
+                (c-> c.is("arrow2","TRIANGLE")), 
+                (c-> c.is("arrow1","")), 
+                "inheritance paired with non-null arrow", er);
         
         // No Labels in Inheritance Constraint -- inheritance cannot have role labels at either end.
         // TODO

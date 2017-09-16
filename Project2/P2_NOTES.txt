@@ -11,5 +11,7 @@ Nathaniel Fousek - Changes 9/16 - Changes pushed to Nathaniel branch
 
 	-Implemented "no illegal references" constraint, made simple using Constraints.isLegit method.
 
+	-Implemented triangle constraint using Constraints.implies method
+
 	
 

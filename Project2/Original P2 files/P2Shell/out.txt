@@ -1,3 +1,2 @@
-vBox(ClassNode3...) and vBox(ClassNode2...) both have name = C
-vBox(Void0...) has null name
+vAssociation(A0...) has inheritance paired with non-null arrow
 
