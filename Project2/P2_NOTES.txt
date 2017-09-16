@@ -1,0 +1,4 @@
+Any project notes for CS373s P2 can be put here. Try to stay organized so our notes don't get too messy or convoluted!
+
+==============================================================
+
