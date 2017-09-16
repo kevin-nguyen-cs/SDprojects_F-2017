@@ -1,0 +1,3 @@
+
+ output>
+correct>vAssociation(A1...) has inheritance with roles
