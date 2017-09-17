@@ -38,27 +38,44 @@ public class Conform {
         // Also -- look at Correct answers in regression tests -- you'll see how
         // to phrase errors to match correct output.
         
-        // Middle Labels Constraint -- no middle labels on associations is permitted.
-        // TODO
+        // Middle Labels Constraint -- no middle labels on associations is permitted 
+        vAssociation.stream()
+                .filter(c-> !(c.is("middleLabel","")))  //Filter any tuples with non-blank middle lables.
+                .forEach(c->er.add("vAssociation(" + c.get("id") + "...) has middle label should be empty")); //Add error message.
         
+          
         // All vBox Identifiers are unique
-        // TODO
+        Constraints.isUnique(vBox, "id", er);   
         
         // All vAssociation identifiers are unique
-        // TODO
+        Constraints.isUnique(vAssociation, "id", er);
         
-        // No illegal references: each cid1 and cid2 field must reference a legal vBox identifier
-        // TODO
+        // No illegal references: each cid1 and cid2 field must reference a legal vBox identifier    
+        //Ensure that each entry in column "cid1" aligns with a legal vbox id.
+        Constraints.isLegit(vAssociation, "cid1", vBox, "id", er);
+        //Ensure that each entry in column "cid2" aligns with a legal vbox id.
+        Constraints.isLegit(vAssociation, "cid2", vBox, "id", er);
 
         // Unique Name Constraint -- classes and interfaces must have unique names, 
         // no class can share the same name of an interface, and vice versa.
-        // TODO
+        Constraints.isUnique(vBox, "name", er);
 
         // Null Names Constraint -- classes and interfaces cannot have null names.
-        // TODO
+        vBox.stream()
+                .filter(c-> (c.is("name", ""))) //Null names are represented by empty strings in the name column.
+                .forEach(c->er.add("vBox(" + c.get("id")+ "...) has null name"));
 
-        // Triangle Constraint -- inheritance is a line with one arrow ending in a TRIANGLE. Its other arrow must be NONE.
-        // TODO
+        // Triangle Constraint -- inheritance is a line with one arrow ending in a TRIANGLE. Its other arrow must be NONE.       
+        //in a vAssociation, if arrow1 = TRIANGLE, arrow2 = "", and vice versa.
+        Constraints.implies(vAssociation,
+                (c-> c.is("arrow1","TRIANGLE")),                //"if" predicate
+                (c-> c.is("arrow2","")),                        //then this must be true.
+                "inheritance paired with non-null arrow", er);  //else report an error.
+        
+        Constraints.implies(vAssociation,
+                (c-> c.is("arrow2","TRIANGLE")), 
+                (c-> c.is("arrow1","")), 
+                "inheritance paired with non-null arrow", er);
         
         // No Labels in Inheritance Constraint -- inheritance cannot have role labels at either end.
         // TODO
