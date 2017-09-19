@@ -78,22 +78,44 @@ public class Conform {
                 "inheritance paired with non-null arrow", er);
         
         // No Labels in Inheritance Constraint -- inheritance cannot have role labels at either end.
-        // TODO
+        //in a vAssociation, if arrow1 or arrow2 = triangle, role1 and role 2 must both be "".
+        Constraints.implies(vAssociation,
+                (c-> c.is("arrow1","TRIANGLE")),                
+                ((c-> c.is("role1","") && c.is("role2", ""))),                    
+                "inheritance with roles", er);
+        Constraints.implies(vAssociation,
+                (c-> c.is("arrow2","TRIANGLE")),                
+                ((c-> c.is("role1","") && c.is("role2", ""))),                    
+                "inheritance with roles", er); 
         
         // class-class Constraint -- class-class relationships must be SOLID.
-        // TODO
+        //in a vAssociation, if type1 = c, and type2 = c, lineType must be "" (solid)
+        Constraints.implies(vAssociation,
+                (c-> c.is("type1","c") && c.is("type2", "c")),                
+                (c-> c.is("lineStyle","")),                    
+                "class-class relationships that are dotted", er); 
         
         // interface-interface Constraint -- int-int relationships must be SOLID
-        // TODO
+        //in a vAssociation, if type1 = i, and type2 = i, lineType must be "" (solid)
+        Constraints.implies(vAssociation,
+                (c-> c.is("type1","i") && c.is("type2", "i")),                
+                (c-> c.is("lineStyle","")),                    
+                "interface-interface relationships that are dotted", er); 
         
         // Implements Constraint1 -- class implements relationships must be DOTTED
-        // TODO
+        // relation between type1 = c and type2 = i must be dotted?
        
         // All interfaces have no fields -- the field attribute is empty ("")
-        // TODO
+        Constraints.implies(vBox,
+                (c-> c.is("type","i")),                
+                (c-> c.is("fields","")),                    
+                "interface with non-empty fields", er); 
         
         // All notes should have no methods and no fields -- the field and method attributes are empty ("")
-        // TODO
+        Constraints.implies(vBox,
+                (c-> c.is("type","n")),                
+                (c-> c.is("fields","") && c.is("methods", "")),                    
+                "note with non-empty fields and methods", er); 
         
         // Step 5: report errors (if any) and exit
         er.printReport(System.out);
