@@ -1,3 +1,10 @@
+/*
+
+nathaniel fousek - ndf333 - nathaniel.fousek@gmail.com
+Kevin Nguyen - kdn433 - kxnguyen60@utexas.edu
+*/
+
+
 package VPL;
 
 import MDELite.Marquee4Conform;
@@ -104,6 +111,21 @@ public class Conform {
         
         // Implements Constraint1 -- class implements relationships must be DOTTED
         // relation between type1 = c and type2 = i must be dotted?
+        Constraints.implies(vAssociation,
+                (c->c.is("type1", "i") && c.is("type2", "c")),
+                (c->c.is("lineStyle", "DOTTED")),
+                "interface-class relationships that are solid", er);
+                
+        Constraints.implies(vAssociation,
+                (c->c.is("type1", "c") && c.is("type2", "i")),
+                (c->c.is("lineStyle", "DOTTED")),
+                "interface-class relationships that are solid", er);   
+        
+        //Extends constraint - Inheritance relationships must be SOLID
+        Constraints.implies(vAssociation,
+                (c->c.is("arrow1", "TRIANGLE") || c.is("arrow2", "TRIANGLE") && c.is("type1", "i") || c.is("type2" , "i")),
+                (c->c.is("lineStyle", "")),
+                "has extends relationships that are DOTTED", er);
        
         // All interfaces have no fields -- the field attribute is empty ("")
         Constraints.implies(vBox,
@@ -121,3 +143,4 @@ public class Conform {
         er.printReport(System.out);
     }
 }
+
