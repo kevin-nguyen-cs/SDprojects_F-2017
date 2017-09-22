@@ -1,0 +1,335 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type"><title>Demo Programs that Read and Write MDELite Databases</title></head>
+<body>
+<h1 style="text-align: center;"><span style="font-family: Helvetica,Arial,sans-serif;">Programs
+that Read and Write MDELite Databases</span></h1>
+<span style="font-family: Helvetica,Arial,sans-serif;"><br>
+Start with these imports, not all of which are needed for every program
+below. &nbsp;They represent the union required to run all
+demo programs.<br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 80px;">import PrologDB.Column;<br>import PrologDB.DB;<br>import PrologDB.DBSchema;<br>import PrologDB.ErrorReport;<br>import PrologDB.SubTableSchema;<br>import PrologDB.Table;<br>import PrologDB.TableSchema;<br>import PrologDB.Tuple;<br>import java.util.List;<br>import java.util.stream.Collectors;<br>import java.util.stream.Stream;<br></pre>
+<span style="font-family: Helvetica,Arial,sans-serif;">
+</span><span style="font-family: Helvetica,Arial,sans-serif;">Later
+we will use the dog-owner database, shown below:<br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 80px;">dbase(do,[dog,owner,when]).
+
+table(dog,[did,'name','breed', color]).
+dog(d1,'kelsey','aussie',bluemerle).
+dog(d2,'lassie','collie',sable).
+dog(d3,'scarlett','aussie',blacktri).
+dog(d4,'duke','hound dog',brown).
+dog(d5,'scarlett','aussie',bluemerle).
+
+table(owner,[oid,'name']).
+owner(o1,'timmy').
+owner(o2,'don').
+owner(o3,'helen').
+owner(o4,'jed').
+
+table(when,[wid,did,oid,'date']).
+when(w1,d1,o2,'88-95').
+when(w2,d2,o1,'58-71').
+when(w3,d3,o3,'07-12').
+when(w4,d3,o2,'12-').
+when(w5,d4,o4,'58-69').
+</pre>
+<span style="font-family: Helvetica,Arial,sans-serif; font-weight: bold;">Table of Contents</span><br style="font-family: Helvetica,Arial,sans-serif;"><ol style="font-family: Helvetica,Arial,sans-serif;"><li><a href="#Program_1:_Printing_a_Database_Schema">Printing a Database Schema</a></li><li><a href="#Program_2_:_Constructing_Schemas">Constructing Schemas</a></li><li><a href="#Program_3:_Programmatically_Reading_a">Reading a Database</a></li><li><a href="#Program_4:_Programmatically_Reading_a">Reading a Table</a></li><li><a href="#Program_5:_Programmatically_Creating_a">Creating a Database</a></li><li><a href="#Program_6:_Programmatically_Reading">Reading Tuples of a Table and its Subtables</a></li><li><a href="#Program_7:_Taking_Cross_Products_of">Taking Cross Products of Schemas</a></li><li><a href="#Program_8:_Table_Joins">Table Joins</a></li><li><a href="#Program_9:_Self_Joins">Self Joins</a></li><li><a href="#Program_10:_Filtering_Tuples_from">Filtering Tuples from Tables</a></li><li><a href="#Program_11:_Conform_Tests">Conform Tests</a></li><li><a href="#Program_12:_Reading_and_Writing">Reading and Writing Individual Prolog and CSV Tables</a></li></ol><hr style="width: 100%; height: 2px;"><h2 style="font-family: Helvetica,Arial,sans-serif;"><a name="Program_1:_Printing_a_Database_Schema"></a>1:&nbsp;Printing a Database Schema</h2>
+<span style="font-family: Helvetica,Arial,sans-serif;">This
+program takes an ooschema declaration and flattens it into a schema
+declaration. &nbsp;The distinction between ooschemas and
+schemas is that attributes of supertables
+are propagated to each of its subtables, recursively. &nbsp;The
+program prints a database schema one
+table at a time.
+&nbsp;Printing subtable declarations of the database conclude the
+program.<br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 40px;">    void printSchema() throws Exception {<br>        // Step 1: read in ooschema and propagate attributes to convert it<br>        //         into a .schema file, so that it can be instantiated<br>        DBSchema s = DBSchema.readSchema(testdir + "starTrek.ooschema.pl");<br>        s.finishAndPropagateAttributes(); <br><br>        // Step 2: easy way to print a schema<br>        s.print(System.out);<br><br>        // Step 3: harder, but customized<br>        System.out.format("\n=========\n\n");<br>        System.out.format("database %s has \n", s.getName());<br>        for (TableSchema t : s.getTableSchemas()) {<br>            System.out.format("   table %10s with columns ", t.getName());<br>            for (Column c : t.getColumns()) {<br>                String quote = c.isQuoted() ? "\'" : "";<br>                System.out.format("%s%s%s ", quote, c.getName(), quote);<br>            }<br>            System.out.format("\n");<br>        }<br>        System.out.format("\n");<br>        for (SubTableSchema st : s.getSubTableSchemas()) {<br>            TableSchema supr = st.getSuper();<br>            System.out.format("   table %10s has subtables ", supr.getName());<br>            for (TableSchema chld : st.getSubTableSchemas()) {<br>                System.out.format("%s ", chld.getName());<br>            }<br>            System.out.format("\n");<br>        }<br>    }<br> </pre>
+<span style="font-family: Helvetica,Arial,sans-serif;">
+Here is the output of this program:<br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 80px;">dbase(starTrek,[crewman,commander,lieutenant]).
+
+table(crewman,[cid,fname,lname]).
+table(commander,[cid,fname,lname,rank]).
+table(lieutenant,[cid,fname,lname,specialty]).
+
+subtable(crewman,[commander,lieutenant]).
+
+=========
+
+database starTrek has 
+   table    crewman with columns cid fname lname 
+   table  commander with columns cid fname lname rank 
+   table lieutenant with columns cid fname lname specialty 
+
+   table    crewman has subtables commander lieutenant 
+</pre>
+<hr style="width: 100%; height: 2px;"><h2><a name="Program_2_:_Constructing_Schemas"></a><span style="font-family: Helvetica,Arial,sans-serif;">2 : Constructing Schemas</span></h2>
+<span style="font-family: Helvetica,Arial,sans-serif;">This
+program creates a starTrek ooschema programmatically and prints it out
+using standard utilities.</span><span style="font-family: Helvetica,Arial,sans-serif;"><br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 40px;">    DBSchema schemaBuild() throws Exception {<br>        // Step 1: when a schema is initially created, and until it is<br>        //         "finished", it is an .ooschema<br>        DBSchema trekSchema = new DBSchema("starTrek");<br><br>        //  Step 2: add tables<br>        TableSchema crewman = new TableSchema("crewman");<br>        crewman.addColumns("cid","fname","lname");<br>        <br>        TableSchema commander = new TableSchema("commander");<br>        commander.addColumn("rank");<br><br>        TableSchema lieutenant = new TableSchema("lieutenant");<br>        lieutenant.addColumn("specialty");<br><br>        trekSchema.addTableSchemas(crewman,commander,lieutenant);<br><br>        //  Step 3: create the lone subtable declaration, and add to schema<br>        SubTableSchema sts = new SubTableSchema(crewman);<br>        sts.addSubTableSchemas(commander,lieutenant);<br>        trekSchema.addSubTableSchema(sts);<br>        <br>        // Step 4: seal or "finish" the schema so that no further editing of it <br>        //         is possible; propagate supertable attributes to subtables.<br>        trekSchema.finishAndPropagateAttributes();   <br><br>        // return the DBSchema "starTrek.schema.pl"<br>        return trekSchema;<br>    }<br><br></pre>
+<hr style="width: 100%; height: 2px;"><h2 style="font-family: Helvetica,Arial,sans-serif;"><a name="Program_3:_Programmatically_Reading_a"></a>3: Reading a Database</h2>
+<span style="font-family: Helvetica,Arial,sans-serif;">This
+program reads a database given its file, prints the database using
+available utilities and also a harder way by extracting out its
+individual tables and printing its tuples.</span><span style="font-family: Helvetica,Arial,sans-serif;"><br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 40px;">    void DBread() throws Exception {<br>        // Step 1: read a database given its file<br>        DB db = DB.readDataBase(testdata+"/enterprise.starTrek.pl");<br>        <br>        // Step 2: easy way to print a database<br>        db.print(System.out);<br><br>        // Step 3: a more customized way<br>        System.out.format("\n\n ===== \n\n");<br>        System.out.format("database %s contains:\n", db.getName());<br><br>        for (Table t : db.getTables()) {<br>            System.out.format("Table %s\n", t.getName());<br>            t.stream().forEach(tup ->tup.print(System.out));<br>            System.out.format("\n");<br>        }<br>    }<br> <br></pre>
+<span style="font-family: Helvetica,Arial,sans-serif;">Here
+is the output of this program:<br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 80px;">dbase(starTrek,[crewman,commander,lieutenant]).
+
+table(crewman,[cid,fname,lname]).
+crewman(c1,mr,spock).
+
+table(commander,[cid,fname,lname,rank]).
+commander(c2,james,kirk,captain).
+
+table(lieutenant,[cid,fname,lname,specialty]).
+lieutenant(c3,hikaru,sulu,navigation).
+
+subtable(crewman,[commander,lieutenant]).
+
+
+ ===== 
+
+database enterprise contains:
+Table crewman
+crewman(c1,mr,spock).
+commander(c2,james,kirk,captain).
+lieutenant(c3,hikaru,sulu,navigation).
+
+Table commander
+commander(c2,james,kirk,captain).
+
+Table lieutenant
+lieutenant(c3,hikaru,sulu,navigation).
+
+<br><span style="font-family: Helvetica,Arial,sans-serif;"></span></pre>
+<hr style="width: 100%; height: 2px;"><h2 style="font-family: Helvetica,Arial,sans-serif;"><a name="Program_4:_Programmatically_Reading_a"></a>4: Reading a Table</h2>
+<span style="font-family: Helvetica,Arial,sans-serif;">This
+program reads a dog-owner database, which has a table of dogs.
+&nbsp;Using Java Streams, the stream of all aussie tuples ('aussie'
+means Australian Shepherd) is created and then
+printed. &nbsp;A similar stream is reconstituted (remember: once
+you use a stream, it's done and has to be recreated) and then filtered
+further, and printed.</span><span style="font-family: Helvetica,Arial,sans-serif;"><br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 40px;">    void TableRetrieve() {<br>        // Step 1: read the database containing desired table, and get the table<br>        DB db = DB.readDataBase(testdata+"/dogOwner.do.pl");<br>        Table dog = db.getTable("dog");<br><br>        // Step 2: retrieve all aussies -- version 1<br>        dog.stream().filter(t -> t.is("breed", "aussie"))<br>                .forEach(t -> t.print(System.out));<br>        System.out.println();<br><br>        // Step 3: retrieve all aussies -- version 2<br>        dog.filter(t -> t.is("breed", "aussie")).print(System.out);<br><br>        // Step 4: retrieve all aussies that are blacktri's -- version 1<br>        Stream<Tuple> aussies = dog.stream().filter(t -> t.is("breed", "aussie"));<br>        Stream<Tuple> cuteAussies = aussies.filter(t -> t.is("color", "blacktri"));<br>        cuteAussies.forEach(t -> t.print(System.out));<br>        System.out.println();<br><br>        // Step 5: another version, this time using TupleLists -- version 2<br>        dog.filter(t -> t.is("breed", "aussie") && t.is("color", "blacktri"))<br>                .print(System.out);<br>    }<br> <br></pre>
+<hr style="width: 100%; height: 2px;"><h2 style="font-family: Helvetica,Arial,sans-serif;"><a name="Program_5:_Programmatically_Creating_a"></a>5: Creating a Database</h2>
+<span style="font-family: Helvetica,Arial,sans-serif;">This
+program creates the enterprise database which has 3 tuples,
+one tuple per table. &nbsp;An ooschema for the database is created
+and then converted into a true schema (shown above).
+&nbsp;At this point, a database instance of the schema can be
+created, one table and one tuple at a time.</span><span style="font-family: Helvetica,Arial,sans-serif;"><br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 40px;">    void DBBuild() throws Exception {<br>        // Step 1: build the starTrek schema and then instantiate it with <br>        //         an empty database<br>        DBSchema trekSchema = schemaBuild();  // see schemaBuild() defn above<br>        DB enterprise = new DB("enterprise", trekSchema);<br><br>        // Step 2: create the spock tuple<br>        Table crewman = enterprise.getTableEH("crewman");<br>        Tuple spock = new Tuple(crewman);<br>        spock.setValues("c1", "mr", "spock");<br>        crewman.add(spock);<br><br>        //  Step 3: create the sulu tuple<br>        Table lieutenant = enterprise.getTableEH("lieutenant");<br>        Tuple sulu = new Tuple(lieutenant);<br>        sulu.setValues("c3", "hikaru", "sulo", "navigation");<br>        lieutenant.add(sulu);<br><br>        //  Step 4: create the kirk tuple<br>        Table commander = enterprise.getTableEH("commander");<br>        Tuple kirk = new Tuple(commander);<br>        kirk.setValues("c2", "james", "kirk", "captain");<br>        commander.add(kirk);<br><br>        //  Step 5: now print database<br>        enterprise.print(System.out);<br>    }<br> <br></pre>
+<span style="font-family: Helvetica,Arial,sans-serif;">Here
+is the output of this program:<br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 80px;">dbase(starTrek,[crewman,commander,lieutenant]).
+
+table(crewman,[cid,fname,lname]).
+crewman(c1,mr,spock).
+
+table(commander,[cid,fname,lname,rank]).
+commander(c2,james,kirk,captain).
+
+table(lieutenant,[cid,fname,lname,specialty]).
+lieutenant(c3,hikaru,sulo,navigation).
+
+subtable(crewman,[commander,lieutenant]).
+</pre>
+<hr style="width: 100%; height: 2px;"><h2 style="font-family: Helvetica,Arial,sans-serif;"><a name="Program_6:_Programmatically_Reading"></a>6: Reading Tuples of a Table and its Subtables</h2>
+<span style="font-family: Helvetica,Arial,sans-serif;">This
+program reads the tuples of the table pet and all of its subtables. &nbsp;If you want to retrieve tuples of only
+that table (and not its subtables), use the getLocalTuples()
+method. &nbsp;A couple queries are illustrated. &nbsp; </span><span style="font-family: Helvetica,Arial,sans-serif;"><br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 40px;">    void InheritanceRetrieve() {<br>        // Step 1 : read the database and get the pet table<br>        DB db = DB.readDataBase(testdata+"/pets.petdb.pl");<br>        Table pet = db.getTableEH("pet");<br><br>        // Step 1: print all pets in pet table and subtables<br>        pet.print(System.out);<br>        <br>        // Step 2: or a more verbose way:<br>        pet.getSchema().print(System.out);<br>        pet.tuples().forEach(t->t.print(System.out));<br>        <br><br>        // Step 3: all pets whose name begins with "l" -- streaming version<br>        System.out.println("\nlist of all pets whose name starts with 'l'");<br>        pet.stream()<br>                .filter(t -> t.get("name").startsWith("l"))<br>                .forEach(t -> t.print(System.out));<br><br>        // Step 4: all pets whose name begins with "l" -- table version<br>        System.out.println("\nversion 2");<br>        Table shorterPet = pet.filter(t->t.get("name").startsWith("l"));<br>        shorterPet.print(System.out);<br>    }<br> </pre>
+<hr style="width: 100%; height: 2px;"><h2 style="font-family: Helvetica,Arial,sans-serif;"><a name="Program_7:_Taking_Cross_Products_of"></a>7: Taking Cross Products of Schemas</h2>
+<span style="font-family: Helvetica,Arial,sans-serif;">Table
+joins take cross products of schemas. &nbsp;Occasionally you might
+need
+to do this yourself. &nbsp;The following program illustrates how
+cross
+products of schemas are taken and printed.</span><br>
+<span style="font-family: Helvetica,Arial,sans-serif;"> </span>
+<pre style="margin-left: 40px;">    public void crossSchema() {<br>        // Step 1: although this is a database file, you can still use it<br>        //         to read its schema.  Then read and print the dog and <br>        //         owner table schemas<br>        DBSchema dbs = DBSchema.readSchema(testdata+"/dogOwner.do.pl");<br>        TableSchema dog = dbs.getTableSchema("dog");<br>        dog.print(System.out);<br>        TableSchema owner = dbs.getTableSchema("owner");<br>        owner.print(System.out);<br>        <br>        // Step 2: here is where the cross-product of two schemas is taken<br>        TableSchema dXoSchema = dog.crossProduct(owner);<br>        dXoSchema.print(System.out);<br><br>        // Step 3: take cross product of all 3 schemas, 2 at a time<br>        TableSchema when = dbs.getTableSchema("when");<br>        when.print(System.out);<br>        TableSchema dogXwhen = dog.crossProduct(when);<br>        dogXwhen.print(System.out);<br>        TableSchema dogXwhenXowner = dogXwhen.crossProduct(owner);<br>        dogXwhenXowner.print(System.out);<br>    }<br> <br></pre>
+<span style="font-family: Helvetica,Arial,sans-serif;">Here
+is the output of this program:</span><br>
+<pre style="margin-left: 80px;"><span style="font-family: Helvetica,Arial,sans-serif;"></span><span style="font-family: Helvetica,Arial,sans-serif;"></span>BEGIN cross schema tests 
+
+table(dog,[did,"name","breed",color]).
+table(owner,[oid,"name"]).
+table(dog_x_owner,[dog.did,"dog.name","dog.breed",dog.color,owner.oid,"owner.name"]).
+table(when,[wid,did,oid,"date"]).
+table(dog_x_when,[dog.did,"dog.name","dog.breed",dog.color,when.wid,when.did,when.oid,"when.date"]).
+table(dog_x_when_x_owner,[dog.did,"dog.name","dog.breed",dog.color,when.wid,when.did,when.oid,"when.date",owner.oid,"owner.name"]).
+
+END cross schema tests
+</pre>
+<hr style="width: 100%; height: 2px;"><h2 style="font-family: Helvetica,Arial,sans-serif;"><a name="Program_8:_Table_Joins"></a>8: Table Joins</h2>
+<span style="font-family: Helvetica,Arial,sans-serif;">This
+program reads a dog-owner database, finds the dog, when, and owner
+tables, joins the dog table with the when table over dog.did = when.did
+join predicate (i.e., the did columns of both tuples must have the same
+value) to produce a new table dogXwhen. &nbsp;<br>
+<br>
+</span>
+<div style="margin-left: 40px;"><span style="font-family: Helvetica,Arial,sans-serif;">Note: the
+attributes of
+the joined relation are renamed. &nbsp;What used to be attribute T
+in
+the dog table is now renamed dog.T. &nbsp;Same for all other
+attributes, so that one can always distinguish attributes with similar
+names. Continuing, this table is printed, and then it is joined with
+the owner table over predicate when.oid = owner.oid, and then the table
+is printed out.</span><span style="font-family: Helvetica,Arial,sans-serif;"></span><br>
+<span style="font-family: Helvetica,Arial,sans-serif;"></span></div>
+<span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 40px;">    void TableJoins() {<br>        // Step 1: read the dog-owner database and get its tables to join<br>        DB db = DB.readDataBase(testdata+"/dogOwner.do.pl");<br>        Table dog = db.getTable("dog");<br>        Table when = db.getTable("when");<br>        Table owner = db.getTable("owner");<br><br>        // Step 2: join dog with when (over fields named "did"), and then join<br>        //         this result with table when (over fields "when.oid" and "oid")<br>        //         Note: the fields of dogXwhen table include "when.did, <br>        //         when.oid, when.date, dog.did, dog.name, dog.breed, <br>        //         and dog.color<br>        Table dogXwhen = Table.join(dog, "did", when, "did");<br>        dogXwhen.print(System.out);<br>        Table dogXwhenXowner = Table.join(dogXwhen, "when.oid", owner, "oid");<br>        dogXwhenXowner.print(System.out);<br>    }<br> <br></pre>
+<span style="font-family: Helvetica,Arial,sans-serif;">Here
+is the output of this program:</span><br>
+<pre style="margin-left: 80px;"><span style="font-family: Helvetica,Arial,sans-serif;"></span><span style="font-family: Helvetica,Arial,sans-serif;"></span><span style="font-family: monospace;">table(dog_x_when,[dog.did,"dog.name","dog.breed",dog.color,when.wid,when.did,when.oid,"when.date"]).
+dog_x_when(d1,'kelsey','aussie',bluemerle,w1,d1,o2,'88-95').
+dog_x_when(d2,'lassie','collie',sable,w2,d2,o1,'58-71').
+dog_x_when(d3,'scarlett','aussie',blacktri,w3,d3,o3,'07-12').
+dog_x_when(d3,'scarlett','aussie',blacktri,w4,d3,o2,'12-').
+dog_x_when(d4,'duke','hound dog',brown,w5,d4,o4,'58-69').
+
+table(dog_x_when_x_owner,[dog.did,"dog.name","dog.breed",dog.color,when.wid,when.did,when.oid,"when.date",owner.oid,"owner.name"]).
+dog_x_when_x_owner(d1,'kelsey','aussie',bluemerle,w1,d1,o2,'88-95',o2,'don').
+dog_x_when_x_owner(d2,'lassie','collie',sable,w2,d2,o1,'58-71',o1,'timmy').
+dog_x_when_x_owner(d3,'scarlett','aussie',blacktri,w3,d3,o3,'07-12',o3,'helen').
+dog_x_when_x_owner(d3,'scarlett','aussie',blacktri,w4,d3,o2,'12-',o2,'don').
+dog_x_when_x_owner(d4,'duke','hound dog',brown,w5,d4,o4,'58-69',o4,'jed').
+
+</span><span style="font-family: Courier New,Courier,monospace;"></span></pre>
+<hr style="width: 100%; height: 2px;"><h2 style="font-family: Helvetica,Arial,sans-serif;"><a name="Program_9:_Self_Joins"></a>9: Self Joins</h2>
+<span style="font-family: Helvetica,Arial,sans-serif;">Self-joins
+(joining a table with itself) has always been an obstacle in DBMS
+design. &nbsp;Here is a program that joins the dog table with
+itself over dog identifiers (did). &nbsp;The key to self-joins is
+that
+a copy of a table for each self-join must be made. &nbsp;If a dog
+table
+is to be joined with itself, the dog table is really joined with a
+copy. &nbsp;If a dog table is to be joined with itself, followed by
+itself, the dog table and two distinct copies of the dog table must be
+joined. &nbsp;Now, this particular example, of joining a dog table
+with
+itself isn't particularly useful, but when you have a table that
+encodes (parent, child) relationships, joining such tables allows you
+to relate parents to grandchildren, and so on.</span><span style="font-family: Helvetica,Arial,sans-serif;"><br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 40px;">    void selfJoin() {<br>        //  Step 1: as usual, read a database and get the dog table and<br>        //          copy it.<br>        DB db = DB.readDataBase(testdata+"/dogOwner.do.pl");<br>        Table dog = db.getTable("dog");<br>        Table dog2 = dog.copyForSelfJoins("dog2");<br><br>        // Step 2: join tables.  The resulting table has 8 fields:<br>        //         dog.did, dog.name, dog.breed, dog.color and<br>        //         dog2.did, dog2.name, dog2.breed, and dog2.color<br>        <br>        Table dogXdog2 = Table.join(dog, "did", dog2, "did");<br>        dogXdog2.print(System.out);<br>    }<br> </pre>
+<hr style="width: 100%; height: 2px;"><h2 style="font-family: Helvetica,Arial,sans-serif;"><a name="Program_10:_Filtering_Tuples_from"></a>10: &nbsp;Filtering Tuples from Tables</h2>
+<span style="font-family: Helvetica,Arial,sans-serif;">This
+program illustrates several ways in which you can filter tuples from
+tables. &nbsp; The first uses a loop with an
+if-statement. &nbsp;The second creates a stream of tuples that are
+filtered and printed. The third creates a table of only filtered tuples that is then printed.
+&nbsp;The only difference between the latter&nbsp;two is that
+stream implementations process one tuple at a time as opposed to one table at a time.</span><span style="font-family: Helvetica,Arial,sans-serif;"><br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 40px;">    public void filter() {<br>        try {<br>            DB db = DB.readDataBase(testdata+"/enterprise.starTrek.pl");<br><br>            // Step 1: first way to process query in loops<br>            System.out.println("first way");<br>            Table crew = db.getTableEH("crewman");<br>            crew.getSchema().print(System.out);<br>            for (Tuple t : crew.tuples()) {<br>                if (t.get("fname").startsWith("h")) {<br>                    t.print(System.out);<br>                }<br>            }<br><br>            // Step 2: second way to process query in streams<br>            System.out.println("\n\nsecond way");<br>            crew.getSchema().print(System.out);<br>            crew.stream()<br>                    .filter(t -> t.get("fname").startsWith("h"))<br>                    .forEach(t -> t.print(System.out));<br><br>            // Step 3: third way tables<br>            System.out.println("\n\nthird way");<br>            Predicate<Tuple> p = t -> t.get("fname").startsWith("h");<br>            crew.filter(p).print(System.out);<br>        } catch (Exception e) {<br>            System.out.println(e.getMessage());<br>        }<br>    }<br> <br></pre>
+<span style="font-family: Helvetica,Arial,sans-serif;">Here
+is the output of this program:</span><br>
+<pre style="margin-left: 80px;"><span style="font-family: Helvetica,Arial,sans-serif;"></span><span style="font-family: Helvetica,Arial,sans-serif;"></span><span style="font-family: monospace;">first way
+table(crewman,[cid,fname,lname]).
+lieutenant(c3,hikaru,sulu,navigation).
+
+
+second way
+table(crewman,[cid,fname,lname]).
+lieutenant(c3,hikaru,sulu,navigation).
+
+
+third way
+table(crewman,[cid,fname,lname]).
+lieutenant(c3,hikaru,sulu,navigation).
+
+</span></pre>
+<hr style="width: 100%; height: 2px;"><h2 style="font-family: Helvetica,Arial,sans-serif;"><a name="Program_11:_Conform_Tests"></a>11: &nbsp;Conform Tests</h2>
+<span style="font-family: Helvetica,Arial,sans-serif;">A
+Contract is owned by
+precisely one Person or one Company, but never both. &nbsp;(This is
+the "Both" constraint below). &nbsp;The value of
+a Contract held by a Company must exceed 500 (dollars); the value of a
+Contract held by a Person must not be greater than 100 (dollars).
+(These are the "Company" and "Person" constraints below). Note the use
+of a ErrorReport object that collects all
+conformance failures before printing them.</span><span style="font-family: Helvetica,Arial,sans-serif;"><br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 40px;">    public void conform() {<br>        // Step 1: initialize<br>        DB db = DB.readDataBase(testdata+"/ex.con.pl");<br>        Table contract = db.getTableEH("contract");<br>        ErrorReport er = new ErrorReport();<br><br>        // Step 2: evaluate the Both constraint, collecting offenses<br>        contract.stream()<br>                .filter(t -> ((t.isNull("pid") && t.isNull("cid"))<br>                        || (!t.isNull("pid") && !t.isNull("cid"))))<br>                .forEach(t -> er.add("Both constraint violated " + t.get("kid")));<br><br>        // Step 3: evaluate the Company constraint, collecting offenses<br>        contract.stream()<br>                .filter(t -> (!t.isNull("cid") && t.getInt("value") < 500))<br>                .forEach(t -> er.add("company constraint violated " + t.get("kid")));<br><br>        // Step 4: evaluate the Person constraint, collecting offenses<br>        contract.stream()<br>                .filter(t -> !t.isNull("pid") && t.getInt("value") > 100)<br>                .forEach(t -> er.add("person constraint violated " + t.get("kid")));<br><br>        // Step 5: finally, print all offenses; if there are any, the <br>        //         errors are printed to System.out and a Error is thrown<br>        <br>        er.printReport(System.out);<br>    }<br> <br></pre>
+<span style="font-family: Helvetica,Arial,sans-serif;">Here
+is the ex.con database:<br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 80px;">dbase(con,[company,contract,person]).
+table(company,[cid,"name"]).
+table(contract,[kid,value,cid,pid]).
+table(person,[pid,"name"]).
+
+person(p1,'Batory').
+person(p2,'Lin').
+person(p3,'Browne').
+
+contract(k1,740,c1,null).
+contract(k2,220,null,p1).
+contract(k3,330,c2,null).
+contract(k4,47,null,p2).
+contract(k5,400,c1,p2).
+
+company(c1,'Ace Plumbing').
+company(c2,'Rudys BBQ').
+company(c4,'Os Cafeteria').
+</pre>
+<span style="font-family: Helvetica,Arial,sans-serif;">and
+below it is the output of this program:<br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 80px; font-family: monospace;">Both constraint violated k5
+company constraint violated k3
+company constraint violated k5
+person constraint violated k2
+person constraint violated k5
+
+</pre>
+<span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<hr style="width: 100%; height: 2px;"><h2 style="font-family: Helvetica,Arial,sans-serif;"><a name="Program_12:_Reading_and_Writing"></a>12: &nbsp;Reading and Writing Individual Prolog and CSV Tables</h2>
+<span style="font-family: Helvetica,Arial,sans-serif;">You
+can read and write individual tables, either in the standard
+Prolog format or as a CSV (comma separated value) file. &nbsp;The
+name
+of the file (whether it ends or not in ".csv") determines whether the
+file is to be read/written as a CSV file.<br>
+</span>
+<pre style="margin-left: 40px;">    public void csvfile() {<br>        Table csv = Table.readTable("test/DML/PrologDB/TestData/simple.csv");<br>        csv.writeTable("simple.pl");<br>        csv.writeTable("simple.csv");<br>    }<br><br></pre><span style="font-family: Helvetica,Arial,sans-serif;">Here is the <span style="font-weight: bold;">simple.csv</span> file -- all CSV tables are assumed to have quoted attributes (and hence quoted values):</span><span style="font-family: Helvetica,Arial,sans-serif;"><br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 80px;">Id,ab,cd
+i1,ab,cd
+i2,ef,gh
+i3,ij,kl
+</pre><span style="font-family: Helvetica,Arial,sans-serif;">And here it's Prolog formatted output:<br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 80px;">table(simple,["Id","ab","cd"]).
+simple('i1','ab','cd').
+simple('i2','ef','gh').
+simple('i3','ij','kl').
+
+<br></pre><span style="font-family: Helvetica,Arial,sans-serif;">And what it looks like written out:</span><span style="font-family: Helvetica,Arial,sans-serif;"><br>
+</span><span style="font-family: Helvetica,Arial,sans-serif;"></span>
+<pre style="margin-left: 80px;">Id,ab,cd
+i1,ab,cd
+i2,ef,gh
+i3,ij,kl
+<br><br></pre><hr style="width: 100%; height: 2px;"><br><br><br><span style="font-family: Helvetica,Arial,sans-serif;"><br></span><span style="font-family: Helvetica,Arial,sans-serif;"></span></body></html>
+
