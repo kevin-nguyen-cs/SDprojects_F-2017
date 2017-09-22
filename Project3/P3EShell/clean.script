@@ -1,0 +1,2 @@
+rm -f *.pl *.txt *.violet *.yuml *~
+ant clean
