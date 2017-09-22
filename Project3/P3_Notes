@@ -1,0 +1,16 @@
+#Put any notes here about Project 3. 
+
+
+Kevin: 9/22/2017 - Information regarding Yuml is provided below
+                  
+                   https://yuml.me/
+
+SIDE NOTE - If you want to use Linux and SSH into the CS Machines with Windows or Mac then download
+            and install xming, winscp, and putty. Winscp will enable a direct SSH interface into the 
+            CS Machines so you can use their linux environment. Putty can run directly from WINSCP 
+            to enable command line programming. Xming will allow the user to access physical devices
+            from across the network (such as accessing NetBeans or other programs). Xming is a slow
+            program! Download links are below.
+            
+            https://winscp.net/eng/download.php (To download both WINSCP and PUTTY)
+            https://sourceforge.net/projects/xming/ (To download Xming)
