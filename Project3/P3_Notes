@@ -14,3 +14,22 @@ SIDE NOTE - If you want to use Linux and SSH into the CS Machines with Windows o
             
             https://winscp.net/eng/download.php (To download both WINSCP and PUTTY)
             https://sourceforge.net/projects/xming/ (To download Xming)
+            
+            
+SETTING CLASSPATHS (Linux) - To set the classpath, you must use "export CLASSPATH=.:/<your directory/<location of file/folder.."
+                             However, due to the way the projects are set up, you must be in the top level directory of where
+                             the program runs. You must be in, for example, the P2 folder to use the command line. You must not
+                             be in any sub-folder or parent-folder other than the top level project folder when running the program.
+                             You must also insert any missing files directly into the top level directory in order for the terminal
+                             to recognize it (such as .vpl.pl schemas). There is a solution without this hassle, but this method
+                             is the simple version (idea orginally from Dr. Batory).
+                             
+                             --> /u/someone/Desktop/P3Shell/<list of files for P3>
+                             --> You must be in "P3Shell" folder after setting the classpath to use the command line
+                             --> Any additional files place into "P3Shell" directly (if required)
+                             
+                             
+                             
+  
+  
+                             
