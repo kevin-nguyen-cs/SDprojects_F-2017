@@ -9,7 +9,11 @@ import PrologDB.Tuple;
 
 
 public class vpl2ypl {
-
+    
+    static DB inputdb;
+    static Table vBox;
+    static Table vAssociation;
+    
     /**
      * @param args the command line arguments
      */
@@ -22,13 +26,29 @@ public class vpl2ypl {
         String appName = mark.getAppName(inputFileName);
         
         // Step 2: read in database
-        // TODO
+        inputdb = DB.readDataBase(inputFileName);
+        vBox = inputdb.getTableEH("vBox");
+        vAssociation = inputdb.getTableEH("vAssociation");
         
         // Step 3: read ypl schema, create empty database and get empty tables
-        // TODO
+        DBSchema dbs = DBSchema.readSchema("ypl.schema.pl");
+        DB outputdb = new DB("ypl", dbs);
+        
+        Table yumlBox = outputdb.getTable("yumlBox");
+        Table yumlAssociation = outputdb.getTable("yumlAssociation");
         
         // Step 4: translate vBoxes to yumlBox
-        // TODO
+        String id, type, name, methods, fields;
+        
+       for (Tuple thisTuple : vBox.tuples()) {
+           id = thisTuple.get("id");
+           type = thisTuple.get("type");
+           name = thisTuple.get("name");
+           methods = thisTuple.get("methods");
+           fields = thisTuple.get("fields");
+           
+           yumlBox.addTuple(id, type, name, methods, fields);
+       }       
         
         // Step 5: translate vAssociations to yumlAssociations
         // TODO
