@@ -32,7 +32,6 @@ public class vpl2ypl {
         vBox = inputdb.getTableEH("vBox");
         vAssociation = inputdb.getTableEH("vAssociation");
 
-        
         // Step 3: read ypl schema, create empty database and get empty tables
         DBSchema dbs = DBSchema.readSchema("ypl.schema.pl");
         DB outputdb = new DB("ypl", dbs);
@@ -43,6 +42,7 @@ public class vpl2ypl {
         // Step 4: translate vBoxes to yumlBox
         String id, type, name, methods, fields;
         
+        // get tuple instances per vBox tuples
        for (Tuple thisTuple : vBox.tuples()) {
            id = nl(thisTuple.get("id"));
 
@@ -93,7 +93,19 @@ public class vpl2ypl {
      * throws exception if direction is not 1 or 2
      */
     public static String xlateArrow(int direction, Tuple t) {
-        // TODO
+        /* local delcaration */
+        String result = "";
+        /* try and catch statement to translate given direction */
+        try {
+            /* check if arrow is outside bounds, if so raise exception */
+            if (direction > 2 || direction < 1) {
+                throw new java.lang.RuntimeException();
+            }
+            result = ""; //TRANSLATION BEGINS HERE
+        }
+        catch (Exception e) {
+            System.err.println("ERROR: Arrow is illegally defined!") //error report
+        }
         return null;
     }
     
@@ -113,6 +125,5 @@ public class vpl2ypl {
      */
     public static String nl(String x) {
         return x.replace("%",";");
-    }
-    
+    }   
 }
