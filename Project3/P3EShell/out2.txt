@@ -1,0 +1,7 @@
+
+---> violet.class.violet violet.vpl.pl submitted as input
+
+Usage: Violett.ClassParser X.class.violet [X.vpl.pl]
+       translate X.class.violet to X.vpl.pl
+       1st argument must conform to format X.class.violet
+       if 2nd argument is absent, output file is X.vpl.pl

@@ -26,9 +26,12 @@ public class vpl2ypl {
         String appName = mark.getAppName(inputFileName);
         
         // Step 2: read in database
+        //System.out.println("sanity check 2: " + inputFileName);
         inputdb = DB.readDataBase(inputFileName);
+        //System.out.println("sanity check 3: i am not the error");
         vBox = inputdb.getTableEH("vBox");
         vAssociation = inputdb.getTableEH("vAssociation");
+
         
         // Step 3: read ypl schema, create empty database and get empty tables
         DBSchema dbs = DBSchema.readSchema("ypl.schema.pl");
@@ -41,20 +44,44 @@ public class vpl2ypl {
         String id, type, name, methods, fields;
         
        for (Tuple thisTuple : vBox.tuples()) {
-           id = thisTuple.get("id");
-           type = thisTuple.get("type");
-           name = thisTuple.get("name");
-           methods = thisTuple.get("methods");
-           fields = thisTuple.get("fields");
-           
-           yumlBox.addTuple(id, type, name, methods, fields);
+           id = nl(thisTuple.get("id"));
+
+           type = nl(thisTuple.get("type"));
+
+           name = nl(thisTuple.get("name"));
+
+           methods = nl(thisTuple.get("methods"));
+
+           fields = nl(thisTuple.get("fields"));
+
+           yumlBox.addTuple(id, type, name, fields, methods);
        }       
         
         // Step 5: translate vAssociations to yumlAssociations
-        // TODO
+        String aID, box1, role1, end1, lineType, box2, role2, end2;
+        for (Tuple thisTuple : vAssociation.tuples()) {
+            aID = nl(thisTuple.get("id"));
+            
+            //yumlAssociation box1 and box2 columns correspond to vAssociation cid1 and cid2 columns
+            box1 = nl(thisTuple.get("cid1"));
+            box2 = nl(thisTuple.get("cid2"));
+            
+            //yumlAssociation role1 and role2 columns correspond to vAssociation role1 and role2 columns
+            role1 = nl(thisTuple.get("role1"));
+            role2 = nl(thisTuple.get("role2"));
+            
+            //we must translate arrow1 and arrow2 columns of vAssociation tuple to valid yumlAssociation end columns
+            end1 = xlateArrow(1, thisTuple);
+            end2 = xlateArrow(2, thisTuple);
+            
+            //must translate vAssociation lineStyle to yumlAssociation lineType
+            lineType = xlateLineType(thisTuple);
+            
+            yumlAssociation.addTuple(aID, box1, role1, end1, lineType, box2, role2, end2);
+        }
         
         // Step 6: output database
-        // TODO
+        outputdb.print(outputFileName);
     }
     
     /**
