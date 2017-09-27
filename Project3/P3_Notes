@@ -30,6 +30,4 @@ SETTING CLASSPATHS (Linux) - To set the classpath, you must use "export CLASSPAT
                              
                              
                              
-  
-  
-                             
+Kevin:    9/26/2017 - IMPLEMENTED "lastarrow" and "lastline" functions; untested
