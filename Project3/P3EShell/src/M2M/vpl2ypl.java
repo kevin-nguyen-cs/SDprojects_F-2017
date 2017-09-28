@@ -1,4 +1,4 @@
-package M2M;
+ackage M2M;
 
 import MDELite.Marquee2Arguments;
 import MDELite.Utils;
@@ -127,9 +127,6 @@ public class vpl2ypl {
             System.err.println("ERROR: Arrow is illegally defined!"); //error report
         }
         return "";
-            System.err.println("ERROR: Arrow is illegally defined!") //error report
-        }
-        return null;
     }
     
     /**
@@ -141,7 +138,6 @@ public class vpl2ypl {
         /* cases to check which lineStyle is in vAssociation; ""(SOLID) or "DOTTED"*/ //NOTE: MUST TEST THIS!!!
         if (lineStyle.equals("")) {
             return "-"; //solid yuml //NOTE: not sure if it has to be "SOLID" or ""
-            return = "-"; //solid yuml //NOTE: not sure if it has to be "SOLID" or ""
         }
         return "-.-"; //dotted yuml
     }
