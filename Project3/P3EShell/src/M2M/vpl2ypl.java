@@ -127,11 +127,9 @@ public class vpl2ypl {
             System.err.println("ERROR: Arrow is illegally defined!"); //error report
         }
         return "";
-=======
             System.err.println("ERROR: Arrow is illegally defined!") //error report
         }
         return null;
->>>>>>> 2fb9497b7dbf2c08451017f3fb7a2e61f154221d
     }
     
     /**
@@ -142,11 +140,8 @@ public class vpl2ypl {
         String lineStyle = t.get("lineStyle");
         /* cases to check which lineStyle is in vAssociation; ""(SOLID) or "DOTTED"*/ //NOTE: MUST TEST THIS!!!
         if (lineStyle.equals("")) {
-<<<<<<< HEAD
             return "-"; //solid yuml //NOTE: not sure if it has to be "SOLID" or ""
-=======
             return = "-"; //solid yuml //NOTE: not sure if it has to be "SOLID" or ""
->>>>>>> 2fb9497b7dbf2c08451017f3fb7a2e61f154221d
         }
         return "-.-"; //dotted yuml
     }
