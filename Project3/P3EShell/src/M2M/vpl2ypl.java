@@ -6,7 +6,7 @@ import PrologDB.DB;
 import PrologDB.DBSchema;
 import PrologDB.Table;
 import PrologDB.Tuple;
-
+import java.util.*;
 
 public class vpl2ypl {
     
@@ -32,7 +32,6 @@ public class vpl2ypl {
         vBox = inputdb.getTableEH("vBox");
         vAssociation = inputdb.getTableEH("vAssociation");
 
-        
         // Step 3: read ypl schema, create empty database and get empty tables
         DBSchema dbs = DBSchema.readSchema("ypl.schema.pl");
         DB outputdb = new DB("ypl", dbs);
@@ -43,6 +42,7 @@ public class vpl2ypl {
         // Step 4: translate vBoxes to yumlBox
         String id, type, name, methods, fields;
         
+        // get tuple instances per vBox tuples
        for (Tuple thisTuple : vBox.tuples()) {
            id = nl(thisTuple.get("id"));
 
@@ -77,9 +77,9 @@ public class vpl2ypl {
             //must translate vAssociation lineStyle to yumlAssociation lineType
             lineType = xlateLineType(thisTuple);
             
+            /* add created tuple to yumlAssociation */
             yumlAssociation.addTuple(aID, box1, role1, end1, lineType, box2, role2, end2);
         }
-        
         // Step 6: output database
         outputdb.print(outputFileName);
     }
@@ -93,16 +93,53 @@ public class vpl2ypl {
      * throws exception if direction is not 1 or 2
      */
     public static String xlateArrow(int direction, Tuple t) {
-        // TODO
-        return null;
+        /* try and catch statement to translate given direction */
+        try {
+            /* check if arrow is outside bounds, if so raise exception */
+            if (direction > 2 || direction < 1) {
+                throw new java.lang.RuntimeException();
+            }
+            /* look into tuple t which is a vAssociation tuple of data */ // NOTE THIS SECTION MUST BE TESTED!!
+            /* Arrow1 --> could be V, TRIANGLE, DIAMOND, BLACK_DIAMOND, or "" */
+            /* Arrow2 --> could be V, TRIANGLE, DIAMOND, BLACK_DIAMOND, or "" */
+            String arrowtype = t.get("arrow"+Integer.toString(direction)); //append arrow with direction value and get type from tuple; "arrow1" or "arrow2"
+            /* check for solid triangle and direction */
+            if (direction == 1 && arrowtype.equals("V")) {
+                return "<"; //end1 arrow
+            }
+            else if (direction == 2 && arrowtype.equals("V")) {
+                return ">"; //end2 arrow
+            }
+            /* check for solid diamond; can be applied to end1 or end2 */
+            if (arrowtype.equals("BLACK_DIAMOND")) {
+                return "++"; //end1 or end2 arrow
+            }
+            /* check for open triangle; can be applied to end1 or end2 */
+            if (arrowtype.equals("TRIANGLE")) {
+                return "^"; //end1 or end2, doesn't matter
+            }
+            /* check for open diamond; can be applied to end1 or end2 */
+            if (arrowtype.equals("DIAMOND")) {
+                return "<>"; //end1 or end2, doesn't matter
+            }
+        }
+        catch (Exception e) {
+            System.err.println("ERROR: Arrow is illegally defined!"); //error report
+        }
+        return "";
     }
     
     /**
      * translate vpl lineStyle attribute to ypl lineType
      */
     public static String xlateLineType(Tuple t) {
-        // TODO
-        return null;
+        /* Obtain string line style for vAssociation */
+        String lineStyle = t.get("lineStyle");
+        /* cases to check which lineStyle is in vAssociation; ""(SOLID) or "DOTTED"*/ //NOTE: MUST TEST THIS!!!
+        if (lineStyle.equals("")) {
+            return "-"; //solid yuml //NOTE: not sure if it has to be "SOLID" or ""
+        }
+        return "-.-"; //dotted yuml
     }
     
     /**
@@ -114,5 +151,4 @@ public class vpl2ypl {
     public static String nl(String x) {
         return x.replace("%",";");
     }
-    
 }

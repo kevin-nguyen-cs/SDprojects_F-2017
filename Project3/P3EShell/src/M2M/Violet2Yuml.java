@@ -17,7 +17,10 @@ public class Violet2Yuml {
         // Step 2: perform transformation chain
         
         //parse *.class.violet file into *.vpl.pl   
-        ClassParser.main(appName + ".class.violet " + appName + ".vpl.pl");
+        
+        System.out.println("bout to parse");
+        
+        ClassParser.main(appName + ".class.violet");
          
         //check that *.vpl.pl meets schema constraints
         Conform.main(appName + ".vpl.pl");
@@ -25,8 +28,12 @@ public class Violet2Yuml {
         //translate *.vpl.pl to *.ypl.pl
         vpl2ypl.main(appName + ".vpl.pl");
         
+        System.out.println("converted to ypl.pl");
+        
         //unprase *.ypl.pl to yuml spec
         ClassUnParser.main(appName + ".ypl.pl");
+        
+        System.out.println("converted to .yuml");
     }
     
 }
