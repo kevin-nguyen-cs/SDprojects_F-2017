@@ -29,12 +29,54 @@ public class ToYuml extends RunningBear {
         
         // Step 3: produce list of class definitions with their attributes and methods
         for (Tuple c : bcClass.tuples()) {
-            // to do
+            String name = c.get("name");
+            String cid = c.get("cid");
+            String fieldsNmethods = "";
+            
+            for (Tuple m : bcMember.tuples()) {
+                if (m.get("cid").equals(cid)) {   
+                    String thisMember = "";
+                    if (m.get("static").equals("true")) {
+                        //if this is a static member, we preface it with "_" character
+                        thisMember += "_";
+                    }
+                    thisMember += m.get("type");
+                    thisMember += " ";
+                    thisMember += m.get("sig");
+                    
+                    /* We only add this if we cannot represent this as an association instead.
+                       This member can be represented as an association if the following things hold true:
+                            1. isTypeAClassOfPackage returns true
+                            2. type is not the class we are currently considering
+                            3. this member does not represent a method (does not contain "(" character)
+                    */
+                    if (isTypeAClassOfPackage(m.get("type"))) {
+                        if (m.get("type").equals(name)) {
+                            fieldsNmethods += thisMember + ";";
+                        } else {
+                            if (thisMember.contains("(")) 
+                                fieldsNmethods += thisMember + ";";    
+                        }
+                    } else {
+                        fieldsNmethods += thisMember + ";";
+                    }           
+                    fieldsNmethods = replaceBadChars(fieldsNmethods);        
+                }
+            }
+            //output this to yuml spec
+            l("[%s|%s|]", name, fieldsNmethods);
         }
         
         // Step 4: produce inheritance links among package classes
         for (Tuple c : bcClass.tuples()) {
-            // to do
+            //inheritance is drawn between a class and its superclass, if superclass has a box
+            //[class]-^[superclass]
+            String name = replaceBadChars(c.get("name"));
+            String superName = replaceBadChars(c.get("superName"));
+            
+            if (isTypeAClassOfPackage(superName)) {
+                l("[%s]-^[%s]", name, superName);
+            }
         }
         
         // Step 5: produce associations among package clases
