@@ -52,7 +52,8 @@ public class ToYuml extends RunningBear {
                     */
                     if (isTypeAClassOfPackage(m.get("type"))) {
                         if (m.get("type").equals(name)) {
-                            fieldsNmethods += thisMember + ";";
+                            if (thisMember.contains("(")) 
+                                fieldsNmethods += thisMember + ";";
                         } else {
                             if (thisMember.contains("(")) 
                                 fieldsNmethods += thisMember + ";";    
@@ -64,7 +65,7 @@ public class ToYuml extends RunningBear {
                 }
             }
             //output this to yuml spec
-            l("[%s|%s|]", name, fieldsNmethods);
+            l("[%s|%s]", name, fieldsNmethods);
         }
         
         // Step 4: produce inheritance links among package classes
@@ -81,7 +82,26 @@ public class ToYuml extends RunningBear {
         
         // Step 5: produce associations among package clases
         for (Tuple c : bcClass.tuples()) {
-            // to do
+               String name = replaceBadChars(c.get("name"));
+               String cid = c.get("cid");
+               
+               for (Tuple m :bcMember.tuples()) {
+                   String sig = m.get("sig");
+                   String type = m.get("type");
+                   
+                    if (cid.equals(m.get("cid"))) {
+                        if (isTypeAClassOfPackage(type)) {
+                            if (!(sig.contains("("))) {
+                                String cardinality = "";
+                                if (type.contains("["))
+                                    cardinality = "*";
+                                else
+                                    cardinality = "0..1";
+                                l("[%s]->%s %s[%s]",name,cardinality,m.get("sig"),returnClassName(type));
+                                }
+                        }
+                    }    
+               }
         }
     }
     

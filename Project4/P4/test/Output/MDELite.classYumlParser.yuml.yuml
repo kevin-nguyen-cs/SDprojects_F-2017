@@ -1,3 +1,3 @@
-[MDELite.classYumlParser.connection|_MDELite.classYumlParser.connection connection(String String String String String String);_String quote;_String comma;String name1;String role1;String end1;String name2;String role2;String end2;_void writeEdgeTuples();|]
-[MDELite.classYumlParser.klass|_MDELite.classYumlParser.klass klass(String# int);_MDELite.classYumlParser.klass klass(String String String int);String id;String name;String fields;String methods;int lineNumber;_void writeNodeTuples();_String toId(String);|]
-[MDELite.classYumlParser.Main|_MDELite.classYumlParser.Main Main();_void main(String#);_String# checkNameStructure(String);_void printArray(String String#);|]
+[MDELite.classYumlParser.connection|_MDELite.classYumlParser.connection connection(String String String String String String);_String quote;_String comma;String name1;String role1;String end1;String name2;String role2;String end2;_void writeEdgeTuples();]
+[MDELite.classYumlParser.klass|_MDELite.classYumlParser.klass klass(String# int);_MDELite.classYumlParser.klass klass(String String String int);String id;String name;String fields;String methods;int lineNumber;_void writeNodeTuples();_String toId(String);]
+[MDELite.classYumlParser.Main|_MDELite.classYumlParser.Main Main();_void main(String#);_String# checkNameStructure(String);_void printArray(String String#);]
