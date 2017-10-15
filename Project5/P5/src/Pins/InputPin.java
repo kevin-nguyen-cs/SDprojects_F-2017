@@ -13,11 +13,14 @@ public class InputPin {
     Wire wireFrom; // only from one source
     
     public InputPin(String name, Gate parent) {
-        // TO DO
+        name = name;
+        inputOf = parent;
     }
     
     public void addWire(Wire w) {
-         // TO DO
+        //check condition if this wire is already set, because only one wire can connect
+        //to an input pin
+        wireFrom = w;
     }
     
     public String toString() {

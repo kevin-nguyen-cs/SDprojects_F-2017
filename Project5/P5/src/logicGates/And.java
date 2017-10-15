@@ -3,6 +3,7 @@ package logicGates;
 import Pins.*;
 import GatesApp.*;
 import java.util.*;
+import static GatesApp.Feature.*;
 
 public class And extends Gate implements Printable {
     InputPin i1, i2;
@@ -10,7 +11,15 @@ public class And extends Gate implements Printable {
 
     public And(String name) {
         super(name);
-        // TO DO
+        i1 = new InputPin("i1",this);
+        i2 = new InputPin("i2", this);
+        inputs.put("i1",i1);
+        inputs.put("i2",i2);
+        o = new OutputPin("o",this);
+        outputs.put("o", o);
+        if (tables) {
+            table.add(this);
+        }
     }
     
     @Feature(Feature.tables) 

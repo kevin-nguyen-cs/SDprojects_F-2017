@@ -14,17 +14,18 @@ public abstract class Gate {
     HashMap<String, OutputPin> outputs;
 
     public Gate(String name) {
-        // TO DO
+        name = name;
+        inputs = new HashMap<String, InputPin>();
+        outputs = new HashMap<String, OutputPin>();
+        
     }
 
     public InputPin getInput(String name) {
-        // TO DO
-        return null;
+        return inputs.get(name);
     }
 
     public OutputPin getOutput(String name) {
-        // TO DO
-        return null;
+        return outputs.get(name);
     }
 
     @Feature(tables)

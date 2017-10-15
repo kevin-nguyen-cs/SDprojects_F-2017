@@ -10,7 +10,10 @@ public class Wire implements Printable {
     public OutputPin o;
     
     public Wire( OutputPin o, InputPin i ) {
-        // TO DO
+        i = i;
+        o = o;
+        o.addWire(this);
+        i.addWire(this);
     }
     
     public Wire( InputPort o, Gate i, String name) {

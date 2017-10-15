@@ -11,7 +11,13 @@ public class Not extends Gate implements Printable {
 
     public Not(String name) {
         super(name);
-        // TO DO
+        i1 = new InputPin("i1", this);
+        inputs.put("i1",i1);
+        o = new OutputPin("o",this);
+        outputs.put("o", o);
+        if (tables) {
+            table.add(this);
+        }
     }
     
     @Feature(tables) 
