@@ -14,6 +14,10 @@ public class Wire implements Printable {
         o = o;
         o.addWire(this);
         i.addWire(this);
+        
+        if (tables) {
+            table.add(this);
+        }
     }
     
     public Wire( InputPort o, Gate i, String name) {
@@ -38,12 +42,11 @@ public class Wire implements Printable {
     static LinkedList<Wire> table;
     
     public static void resetTable() {
-        // TO DO
+        table = new LinkedList<>();
     }
     
     public static LinkedList<Wire> getTable() { 
-        // TO DO
-        return null;
+        return table;
     }
     
     public void printTableHeader() {
@@ -51,7 +54,7 @@ public class Wire implements Printable {
     }
     
     public void print() {
-        // TO DO
+        System.out.printf("wire(%s,'%s').\n", i.toString(), o.toString());
     }
     
     @Feature(constraints)

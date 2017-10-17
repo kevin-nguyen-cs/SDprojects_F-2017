@@ -27,13 +27,11 @@ public class And extends Gate implements Printable {
     static LinkedList<And> table;
     
     public static void resetTable() {
-        // TO DO
+        table = new LinkedList<>();
     }
     
     public static LinkedList<And> getTable() { 
-        // TO DO
-        return null;
-        
+        return table;   
     }
     
     public void printTableHeader() {
@@ -41,7 +39,7 @@ public class And extends Gate implements Printable {
     }
     
     public void print() {
-        // TO DO
+        System.out.printf("and(%s,'%s','%s','%s').\n", name, i1, i2, o);
     }
         
     @Feature(Feature.eval)    /* for evaluation */

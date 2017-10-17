@@ -31,11 +31,21 @@ public abstract class Gate {
     @Feature(tables)
 
     public static void resetDB() {
-        // TO DO
+        And.resetTable();
+        Or.resetTable();
+        Not.resetTable();
+        InputPort.resetTable();
+        OutputPort.resetTable();
+        Wire.resetTable();
     }
 
     public static void printDB() {
-        // TO DO
+        printTable(And.getTable());
+        printTable(Or.getTable());
+        printTable(Not.getTable());
+        printTable(Wire.getTable());
+        printTable(InputPort.getTable());
+        printTable(OutputPort.getTable());
     }
 
     public static <G extends Printable> void printTable(LinkedList<G> t) {

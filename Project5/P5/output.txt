@@ -1,0 +1,13 @@
+
+table(and,[name,"input1","input2","output"]).
+and(null,'null->null','null->null','null->null').
+and(null,'null->null','null->null','null->null').
+
+table(or,[name,"input1","input2","output"]).
+or(null,'null->null','null->null','null->null').
+
+table(not,[name,"input","output"]).
+not(null,'null->null','null->null').
+not(null,'null->null','null->null').
+
+table(wire,["from","to"]).

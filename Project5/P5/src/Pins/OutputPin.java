@@ -10,6 +10,7 @@ public class OutputPin {
     public String name;
     Gate outputOf;
     AbstractList<Wire> wiresFrom;
+    //LinkedList<Wire> wires = new LinkedList<Wire>();
     
     public OutputPin(String name, Gate parent) {
         name = name;
