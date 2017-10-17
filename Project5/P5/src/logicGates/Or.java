@@ -27,11 +27,11 @@ public class Or extends Gate implements Printable {
     static LinkedList<Or> table;
     
     public static void resetTable() {
-        table = new LinkedList<>();
+        table = new LinkedList<>(); //new list
     }
     
     public static LinkedList<Or> getTable() { 
-        return table;
+        return table; //return linkedlist table
     }
     
     public void printTableHeader() {
@@ -39,7 +39,7 @@ public class Or extends Gate implements Printable {
     }
     
     public void print() {
-        System.out.printf("or(%s,'%s','%s','%s').\n", name, i1, i2, o);
+        System.out.printf("or(%s,'%s','%s','%s').\n", name, i1, i2, o); //print based on OR gate structure
     }
     
     @Feature(eval)

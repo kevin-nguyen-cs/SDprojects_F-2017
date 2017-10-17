@@ -25,11 +25,13 @@ public class Not extends Gate implements Printable {
     static LinkedList<Not> table;
     
     public static void resetTable() {
-        table = new LinkedList<>();
+        // TO DO
+        table = new LinkedList<>(); //intialize brand new linkedlist
     }
     
     public static LinkedList<Not> getTable() { 
-        return table;
+        // TO DO
+        return table; //return this table, which is linkedlist data structure
     }
     
     public void printTableHeader() {
@@ -37,7 +39,8 @@ public class Not extends Gate implements Printable {
     }
     
     public void print() {
-        System.out.printf("not(%s,'%s','%s').\n", name, i1, o);
+        // TO DO
+        System.out.printf("not(%s,'%s','%s').\n", name, i1, o); //print based on NOT gate stucture
     }
     
     @Feature(eval)   /* for logic diagram evaluation */
@@ -46,5 +49,4 @@ public class Not extends Gate implements Printable {
         // TO DO
         return Value.UNKNOWN;
     }
-    
 }

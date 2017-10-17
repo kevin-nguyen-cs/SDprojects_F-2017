@@ -12,10 +12,6 @@ public class OutputPort extends Gate implements Printable {
         super(name);
         i1 = new InputPin("i1", this);
         inputs.put("i1", i1);
-        
-        if (tables) {
-            table.add(this);
-        }
     }
     
     public InputPin getInput() { 
@@ -27,11 +23,13 @@ public class OutputPort extends Gate implements Printable {
     static LinkedList<OutputPort> table;
     
     public static void resetTable() {
-        table = new LinkedList<>();
+        // TO DO
+        table = new LinkedList<>(); //intialize brand new linkedlist
     }
     
     public static LinkedList<OutputPort> getTable() { 
-        return table;
+        // TO DO
+        return table; //return this table, which is linkedlist data structure
     }
     
     public void printTableHeader() {
@@ -39,7 +37,8 @@ public class OutputPort extends Gate implements Printable {
     }
     
     public void print() {
-        System.out.printf("outputPort(%s,'%s').\n", name, i1);
+        // TO DO
+        System.out.printf("outputPort(%s,'%s').\n", name, i1); //print based on outputPort stucture
     }
     
     @Feature(eval)

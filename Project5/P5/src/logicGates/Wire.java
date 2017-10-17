@@ -14,10 +14,6 @@ public class Wire implements Printable {
         o = o;
         o.addWire(this);
         i.addWire(this);
-        
-        if (tables) {
-            table.add(this);
-        }
     }
     
     public Wire( InputPort o, Gate i, String name) {
@@ -42,11 +38,13 @@ public class Wire implements Printable {
     static LinkedList<Wire> table;
     
     public static void resetTable() {
-        table = new LinkedList<>();
+        // TO DO
+        table = new LinkedList<>(); //initialize brand new linkedlist
     }
     
     public static LinkedList<Wire> getTable() { 
-        return table;
+        // TO DO
+        return table; //return this table, which is linkedlist data structure
     }
     
     public void printTableHeader() {
@@ -54,7 +52,8 @@ public class Wire implements Printable {
     }
     
     public void print() {
-        System.out.printf("wire(%s,'%s').\n", i.toString(), o.toString());
+        // TO DO
+        System.out.printf("wire('%s','%s').\n", i, o); //print based on WIRE stucture
     }
     
     @Feature(constraints)

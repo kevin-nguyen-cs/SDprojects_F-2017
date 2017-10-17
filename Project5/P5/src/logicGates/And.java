@@ -24,14 +24,15 @@ public class And extends Gate implements Printable {
     
     @Feature(Feature.tables) 
     
-    static LinkedList<And> table;
+    static LinkedList<And> table; //DATA STRUCTURE IS HERE
     
     public static void resetTable() {
-        table = new LinkedList<>();
+        table = new LinkedList<>(); //reset table with new linkedlist
     }
     
     public static LinkedList<And> getTable() { 
-        return table;   
+        // TO DO
+        return table; //return this table, which is linkedlist data structure
     }
     
     public void printTableHeader() {
@@ -39,7 +40,8 @@ public class And extends Gate implements Printable {
     }
     
     public void print() {
-        System.out.printf("and(%s,'%s','%s','%s').\n", name, i1, i2, o);
+        // TO DO
+        System.out.printf("and(%s,'%s','%s','%s').\n", name, i1, i2, o); //print based on AND gate stucture
     }
         
     @Feature(Feature.eval)    /* for evaluation */

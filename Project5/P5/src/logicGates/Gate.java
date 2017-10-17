@@ -31,6 +31,7 @@ public abstract class Gate {
     @Feature(tables)
 
     public static void resetDB() {
+        // TO DO
         And.resetTable();
         Or.resetTable();
         Not.resetTable();
@@ -40,6 +41,7 @@ public abstract class Gate {
     }
 
     public static void printDB() {
+        // TO DO
         printTable(And.getTable());
         printTable(Or.getTable());
         printTable(Not.getTable());
