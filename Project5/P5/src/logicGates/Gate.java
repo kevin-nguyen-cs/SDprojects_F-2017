@@ -17,7 +17,6 @@ public abstract class Gate {
         name = name;
         inputs = new HashMap<String, InputPin>();
         outputs = new HashMap<String, OutputPin>();
-        
     }
 
     public InputPin getInput(String name) {
@@ -62,17 +61,57 @@ public abstract class Gate {
 
     @Feature(constraints)
 
+    /* Check if all names are unique in the table, if not then return false else true */
+    public boolean hasUniqueNames(String label, LinkedList<G> table) {
+        /* local declarations */
+        ArrayList<String> listOfNames = new ArrayList<String>();
+        Boolean isUnique = true;
+        /* go through each gate object */
+        for(G g : table) {
+            /* check if name is already inside table */
+            if(!listOfNames.contains(g.name)) {
+                isUnique = false;
+                break;
+            }
+            listOfNames.add(g.name); //add to list;
+        }
+        return isUnique;
+    }
+
+    /* all pins must be used, connected to wire; if not then return false else true */
+    public boolean allInputsUsed(String label, LinkedList<G> table) { //edited with parameters**
+        /* local declaration */
+        Boolean used = true;
+        /* go through each gate object */
+        for(G g : table) {
+            //NOTE: GATE CAN HAVE MULTIPLE INPUTS? ITERATE THROUGH THEM? VERIFY EACH?
+            // InputPin myInput = g.getInput(label); //get input pin for this gate
+            // if (!myInput.isUsed()) { //call isUsed function in InputPin class
+            //     used = false;
+            //     break;
+            // }
+        }
+        return used;
+    }
+
+    /* all pins must be used, connected to wire; if not then return false else true */
+    public boolean allOutputsUsed(String label, LinkedList<G> table) { //edited with parameters**
+        /* local declaration */
+        Boolean used = true;
+        /* go through each gate object */
+        for(G g : table) {
+            //NOTE: GATE CAN HAVE MULTIPLE INPUTS? ITERATE THROUGH THEM? VERIFY EACH?
+            // InputPin myOutput = g.getOutput(label); //get input pin for this gate
+            // if (!myOutput.isUsed()) { //call isUsed function in OutputPin class
+            //     used = false;
+            //     break;
+            // }
+        }
+        return used;
+    }
+
+    /* extra constraints that are considered */
     public boolean extra() {  // subclasses override this method if something special needs to be done
-        // TO DO
-        return true;
-    }
-
-    public boolean allInputsUsed() {
-        // TO DO
-        return true;
-    }
-
-    public boolean allOutputsUsed() {
         // TO DO
         return true;
     }
@@ -81,11 +120,19 @@ public abstract class Gate {
 	// TO DO
 	// evaluate the following constraints
 	// 1. every gate of type G has a unique name
+        if (!hasUniqueNames(label, table)) {
+            return false;
+        }
 	// 2. every gate of type G has all of its inputs used (see above)
+        if(!allInputsUsed(label, table)) {
+            return false;
+        }
 	// 3. every gate of type G has all of its outputs used (see above)
+        if(!allOutputsUsed(label table)) {
+            return false;
+        }
 	// 4. any constraint you might think that is particular to
 	//    gates of type G, evaluate it see extra() above
-
         return true;
     }
 
