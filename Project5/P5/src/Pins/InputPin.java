@@ -13,7 +13,7 @@ public class InputPin {
     Wire wireFrom; // only from one source
     
     public InputPin(String name, Gate parent) {
-        name = name;
+        this.name = name;
         inputOf = parent;
     }
     
@@ -30,13 +30,15 @@ public class InputPin {
     @Feature(Feature.constraints)
     
     public boolean isUsed() {
-        // TO DO
-        return false;
+        if (wireFrom == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
     
     public String nameOfGate() {
-         // TO DO
-         return null;
+        return inputOf.name;
     }
     
     @Feature(Feature.eval)    /*  this is for circuit execution */

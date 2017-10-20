@@ -10,8 +10,8 @@ public class Wire implements Printable {
     public OutputPin o;
     
     public Wire( OutputPin o, InputPin i ) {
-        i = i;
-        o = o;
+        this.i = i;
+        this.o = o;
         o.addWire(this);
         i.addWire(this);
         
@@ -42,11 +42,13 @@ public class Wire implements Printable {
     static LinkedList<Wire> table;
     
     public static void resetTable() {
-        table = new LinkedList<>();
+        // TO DO
+        table = new LinkedList<>(); //initialize brand new linkedlist
     }
     
     public static LinkedList<Wire> getTable() { 
-        return table;
+        // TO DO
+        return table; //return this table, which is linkedlist data structure
     }
     
     public void printTableHeader() {
@@ -54,7 +56,8 @@ public class Wire implements Printable {
     }
     
     public void print() {
-        System.out.printf("wire(%s,'%s').\n", i.toString(), o.toString());
+        // TO DO
+        System.out.printf("wire('%s','%s').\n", o, i); //print based on WIRE stucture
     }
     
     @Feature(constraints)

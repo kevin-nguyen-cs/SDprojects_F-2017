@@ -9,11 +9,13 @@ public class OutputPin {
     Value value;
     public String name;
     Gate outputOf;
-    AbstractList<Wire> wiresFrom;
-    //LinkedList<Wire> wires = new LinkedList<Wire>();
+    //AbstractList<Wire> wiresFrom;
+    LinkedList<Wire> wiresFrom;
     
     public OutputPin(String name, Gate parent) {
-        name = name;
+        wiresFrom = new LinkedList<Wire>();
+        //AbstractList<Wire> wiresFrom = new LinkedList<Wire>();
+        this.name = name;
         outputOf = parent;
     }
     
@@ -32,8 +34,11 @@ public class OutputPin {
     @Feature(Feature.constraints)
     
     public boolean isUsed() {
-        // TO DO
-        return false;
+        if (wiresFrom.isEmpty()) {
+            return false;
+        } else {
+            return true;
+        }
     }
     
     @Feature(Feature.eval)
