@@ -14,6 +14,10 @@ public class Wire implements Printable {
         this.o = o;
         o.addWire(this);
         i.addWire(this);
+        
+        if (tables) {
+            table.add(this);
+        }
     }
     
     public Wire( InputPort o, Gate i, String name) {
@@ -53,11 +57,7 @@ public class Wire implements Printable {
     
     public void print() {
         // TO DO
-<<<<<<< HEAD
         System.out.printf("wire('%s','%s').\n", o, i); //print based on WIRE stucture
-=======
-        System.out.printf("wire('%s','%s').\n", i, o); //print based on WIRE stucture
->>>>>>> ff5fd3948dabb1d73491491d5927a5848df4d99d
     }
     
     @Feature(constraints)
