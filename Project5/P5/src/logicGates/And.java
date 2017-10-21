@@ -54,5 +54,4 @@ public class And extends Gate implements Printable {
         else
             return Value.FALSE;
     }
-    
 }

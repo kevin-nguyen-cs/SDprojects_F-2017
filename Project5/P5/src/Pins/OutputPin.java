@@ -36,15 +36,14 @@ public class OutputPin {
     public boolean isUsed() {
         if (wiresFrom.isEmpty()) {
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
     
     @Feature(Feature.eval)
     
     public Value getValue() {
-        // TO DO
-        return null;
+        value = outputOf.getValue() //Not sure about this...it calls an abstract method. We want the value output of the parent gate
+        return null; //Why is value not initialized at the top? purpose? we want some value from somewhere
     }
 }

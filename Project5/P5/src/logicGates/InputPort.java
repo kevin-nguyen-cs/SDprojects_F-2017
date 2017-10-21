@@ -48,13 +48,16 @@ public class InputPort extends Gate implements Printable {
     @Feature(eval)   /* for evaluation */
             
     Value value = Value.UNKNOWN;
-        
-    public void setValue(Value v) {
+    
+    /* sets the values to the start of the circuit */
+    public void setValue(Value v) { 
         // TO DO
+        value = v; //calling from main...so set this field value. If not set then return unknown
     }
     
+    /* retrives value of inputPort to the circuit */
     public Value getValue() {
         // TO DO
-        return null;
+        return value; //just reutrn the value
     }
 }

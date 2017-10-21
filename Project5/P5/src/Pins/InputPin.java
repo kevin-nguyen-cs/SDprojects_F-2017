@@ -32,9 +32,8 @@ public class InputPin {
     public boolean isUsed() {
         if (wireFrom == null) {
             return false;
-        } else {
-            return true;
-        }
+        } 
+        return true;
     }
     
     public String nameOfGate() {
@@ -44,6 +43,10 @@ public class InputPin {
     @Feature(Feature.eval)    /*  this is for circuit execution */
     
     public Value getValue() {
-        return Value.UNKNOWN;
+        Wire thisWire = wireFrom.getValue(); //get incoming value from wire to this pin? [Gate1->OutputPin -- wire -- InputPin-->Gate2]
+        if (thisWire == Value.TRUE) {
+            return Value.TRUE;
+        }
+        return Value.FALSE;
     }
 }

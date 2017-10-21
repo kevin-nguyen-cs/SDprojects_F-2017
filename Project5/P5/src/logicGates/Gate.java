@@ -80,75 +80,61 @@ public abstract class Gate {
 
     /* all pins must be used, connected to wire; if not then return false else true */
     public static boolean allInputsUsed() { 
-        
+        /* Check AND gate inputs being used */
         boolean andUsed = true;
-        for (Gate g : And.getTable()) {
+        for (Gate g : And.getTable()) { //loop through and gates
             InputPin i1 = g.getInput("i1");
             InputPin i2 = g.getInput("i2");
-            
             andUsed = (i1.isUsed() && i2.isUsed());
-            
             if(andUsed == false)
                 return false;
         }
-        
+        /* check OR gate inputs being used */
         boolean orUsed = true;
-        for (Gate g : Or.getTable()) {
+        for (Gate g : Or.getTable()) { //loop through or gates
             InputPin i1 = g.getInput("i1");
             InputPin i2 = g.getInput("i2");
-            
             orUsed = (i1.isUsed() && i2.isUsed());
-            
             if(orUsed == false)
                 return false;
         }
-        
+        /* check not GATE inputs being used */
         boolean notUsed = true;
-        for (Gate g : Not.getTable()) {
+        for (Gate g : Not.getTable()) { //loop through not gates
             InputPin i1 = g.getInput("i1");
-            
             notUsed = (i1.isUsed());
-            
             if(notUsed == false)
                 return false;
         }
-        
         return (andUsed && orUsed && notUsed);
     }
 
     /* all pins must be used, connected to wire; if not then return false else true */
     public static boolean allOutputsUsed() {
-        
+        /* check AND gate outputs */
         boolean andUsed = true;
-        for (Gate g : And.getTable()) {
+        for (Gate g : And.getTable()) { //loop through and gates
             OutputPin o1 = g.getOutput("o");
-            
             andUsed = (o1.isUsed());
-            
             if (andUsed == false)
                 return false;
         }
-        
+        /* check OR gate outputs */
         boolean orUsed = true;
-        for (Gate g : Or.getTable()) {
+        for (Gate g : Or.getTable()) { //loop through or gates
             OutputPin o1 = g.getOutput("o");
-            
             orUsed = (o1.isUsed());
-            
             if (orUsed == false)
                 return false;
         }
-        
+        /* check NOT gate outputs */
         boolean notUsed = true;
-        for (Gate g : Not.getTable()) {
+        for (Gate g : Not.getTable()) { //loop through not gates
             OutputPin o1 = g.getOutput("o");
-            
             notUsed = (o1.isUsed());
-            
             if (notUsed == false)
                 return false;
         }
-        
         return (andUsed && orUsed && notUsed);
     }
 
@@ -179,7 +165,6 @@ public abstract class Gate {
 //    }
 
     public static boolean verify() {
-        
         /* Evaluate hasUniqueNames constraint for each subclass of gate.
            Wires are not included as wires do not have names.
         */
@@ -188,23 +173,15 @@ public abstract class Gate {
         boolean orResult = hasUniqueNames(Or.getTable());
         boolean inportResult = hasUniqueNames(InputPort.getTable());
         boolean outportResult = hasUniqueNames(OutputPort.getTable());
-        
         boolean hasUniqueNames = (andResult && notResult && orResult && inportResult && outportResult);
-        //System.out.println("hasUniqueNames: " + hasUniqueNames);
         
-        /* All Inputs Used Constraint
-        
-        */
+        /* All Inputs Used Constraint */
         boolean allInputsUsed = allInputsUsed();
         //System.out.println("allInputsUsed: " + allInputsUsed);
 
         /* All OutPuts Used Constraint */
-        
         boolean allOutputsUsed = allOutputsUsed();
         //System.out.println("allOutputsUsed: " + allOutputsUsed);
-        
-        
-        
         return hasUniqueNames && allInputsUsed && allOutputsUsed;
     }
 

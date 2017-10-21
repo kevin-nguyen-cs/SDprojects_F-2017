@@ -47,7 +47,10 @@ public class OutputPort extends Gate implements Printable {
     @Feature(eval)
     
     public Value getValue() {
-        // TO DO
-        return Value.UNKNOWN;
+        Value v1 = i1.getValue(); 
+        if (v1==Value.TRUE)
+            return Value.TRUE;
+        else
+            return Value.FALSE;
     }
 }

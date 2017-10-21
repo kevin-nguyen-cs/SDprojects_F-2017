@@ -75,7 +75,11 @@ public class Wire implements Printable {
     @Feature(eval)
     
     public Value getValue() {
-        // TO DO
-        return Value.UNKNOWN;
+        //??? QUESTION - DO WE NEED TO CONSIDER OutputPin?
+        Value v1 = i.getValue();
+        if (v1==Value.TRUE)
+            return Value.TRUE;
+        else
+            return Value.FALSE;
     }
 }
